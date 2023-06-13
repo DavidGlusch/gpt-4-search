@@ -20,13 +20,8 @@ import requests
 import re
 import logging
 import ssl
-import readline
+# import readline
 from typing import Optional
-
-load_dotenv()
-
-
-# Utils
 
 
 def count_tokens(text: str) -> int:
