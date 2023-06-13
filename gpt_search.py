@@ -21,7 +21,7 @@ import re
 import logging
 import ssl
 # import readline
-from typing import Optional
+from typing import Optional, Callable
 
 
 def count_tokens(text: str) -> int:
@@ -127,13 +127,15 @@ def python(code: str) -> str:
 
 tools = [
     {"name": "SEARCH", "args": "(queries: string[])",
-     "description": "searches the web, and returns the top snippets, it'll be better if the query string is in english", "run": search},
+     "description": "searches the web, and returns the top snippets, it'll be better if the query string is in english",
+     "run": search},
     {"name": "SUMMARIZE", "args": "(snippet_ids: uint[])",
-     "description": "click into the search result, useful when you want to investigate the detail of the search result", "run": summarize},
+     "description": "click into the search result, useful when you want to investigate the detail of the search result",
+     "run": summarize},
     {"name": "PYTHON", "args": "(code: string)",
-     "description": "evaluates the code in a python interpreter, wrap code in triple quotes, wrap the answer in `print()`", "run": python},
+     "description": "evaluates the code in a python interpreter, wrap code in triple quotes, wrap the answer in `print()`",
+     "run": python},
 ]
-
 
 # LLM
 
@@ -176,10 +178,10 @@ def call_llm(streaming: bool = False) -> str:
         f"cost: ${total_cost}, prompt_tokens: {prompt_tokens}, complete_tokens: {complete_tokens}")
     print('')
     return resp
-    
+
 
 # Prompts
-    
+
 
 def instruction_prompt(query: str, tools: list[dict], context: Optional[str] = None) -> str:
     prompt = "You are an helpful and kind assistant to answer questions that can use tools to interact with real world and get access to the latest information. You can call one of the following functions:\n"
@@ -199,7 +201,8 @@ def instruction_prompt(query: str, tools: list[dict], context: Optional[str] = N
 
 
 def summarize_messages() -> str:
-    add_message(HumanMessage(content="Summarize the conversations above for another assistant to continue the process"), is_tool_result=True)
+    add_message(HumanMessage(content="Summarize the conversations above for another assistant to continue the process"),
+                is_tool_result=True)
     return call_llm(streaming=False)
 
 
@@ -254,7 +257,7 @@ def run(query: str) -> str:
                 if tool["name"] == func_name:
                     result = tool["run"](func_args)
                     result = f"```result\n{result}\n```"
-                    logging.info(f"tool-result: {result}")
+                    logging.info(f"tool-result: {result}".encode("UTF-8"))
                     add_message(AIMessage(content=result), is_tool_result=True)
                     break
             else:
@@ -265,7 +268,7 @@ def run(query: str) -> str:
             return resp
 
 
-if __name__ == "__main__":
+def starter(prompt: str) -> str:
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s %(levelname)s:%(message)s',
@@ -274,11 +277,12 @@ if __name__ == "__main__":
             # logging.StreamHandler()
         ]
     )
-    while True:
-        user_input = input("> ")
-        logging.info(f"user-input: {user_input}")
-        try:
-            run(user_input)
-            show_references()
-        except Exception as e:
-            print("Error:", e)
+
+    user_input = prompt
+    logging.info(f"user-input: {user_input}")
+    try:
+        result = run(user_input)
+        show_references()
+        return result
+    except Exception as e:
+        print("Error:", e)
