@@ -10,12 +10,13 @@ from gpt_volunteer_search import (
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 USED_ORGANIZATIONS_PATH = os.getenv("USED_ORGANIZATIONS_PATH")
 NECESSARY_EQUIP = os.getenv("NECESSARY_EQUIP")
-ORGANIZATION_TO_GENERATE = 40
+# ORGANIZATION_TO_GENERATE = 40
+
+
 # RELEVANT_RATE = 50
 
 
-
-def main():
+def main(organizations_to_generate):
     PROMPT = f"""
         Your response is processed by a machine, not human,
         so your response should strictly be in the next format:
@@ -33,13 +34,15 @@ def main():
         Your goal is to generate a well-structured list of 
         volunteering organizations that have not been contacted yet
         and are suitable for Eastern Europe. Your response should 
-        include at least {ORGANIZATION_TO_GENERATE} organizations
+        include at least {organizations_to_generate} organizations
         and should strictly adhere to the specified format. 
         Please only include organizations that actually exist and provide real,
         working website links (base URLs, not specific pages).
     """
     result = starter(PROMPT)
+    print("-" * 40)
     print(PROMPT)
+    print("-" * 40)
     organizations = parse_organization_data(result)
     write_organizations_to_csv("organizations.csv", organizations)
     find_duplicates(USED_ORGANIZATIONS_PATH, "organizations.csv", "duplicates.csv")
