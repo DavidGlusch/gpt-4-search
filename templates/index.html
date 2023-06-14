@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Organization Generator</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* Додано стилі для екрану загрузки */
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Organization Generator</h1>
+        <form id="org-form" class="mt-4">
+            <div class="form-group">
+                <label for="org-number">Number of Organizations</label>
+                <input type="number" class="form-control" id="org-number" placeholder="Enter number of organizations">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="loader" class="hidden">
+            <div class="loader"></div>
+            <p>Loading...</p>
+        </div>
+        <table class="table mt-4" id="org-table">
+            <thead>
+                <tr>
+                    <th>Organization Name</th>
+                    <th>Website</th>
+                    <th>Contact Information</th>
+                    <th>Specialization</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</body>
+<script src="static/script.js"></script>
+<script>
+$(document).ready(function() {
+    // Відновлення даних з локального сховища при завантаженні сторінки
+    var storedData = JSON.parse(localStorage.getItem('orgData'));
+    if (storedData) {
+        $('#org-table tbody').html(storedData);
+    }
+
+    $('#org-form').on('submit', function(e) {
+        e.preventDefault();
+        // Показати екран загрузки перед виконанням запиту
+        $('#loader').removeClass('hidden');
+        $.ajax({
+            type: "POST",
+            url: "/generate",
+            data: {
+                number: $('#org-number').val()
+            },
+            success: function(response) {
+                // Приховати екран загрузки після отримання відповіді
+                $('#loader').addClass('hidden');
+                $('#org-table tbody').empty();
+                response.forEach(function(org) {
+                    $('#org-table tbody').append(
+                        '<tr>' +
+                            '<td>' + org['Organization Name'] + '</td>' +
+                            '<td><a href="http://' + org['Website'] + '" target="_blank">' + org['Website'] + '</a></td>' +
+                            '<td>' + org['Contact Information'] + '</td>' +
+                            '<td>' + org['Specialization'] + '</td>' +
+                        '</tr>'
+                    );
+                });
+
+                // Збереження даних у локальне сховище
+                var tableData = $('#org-table tbody').html();
+                localStorage.setItem('orgData', JSON.stringify(tableData));
+            }
+        });
+    });
+});
+</script>
+</html>
