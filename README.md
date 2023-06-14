@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 ### Set up .env file
 ```bash
-cp .env.example .env
+cp .env.sample .env
 ```
 
 ### Run the app
