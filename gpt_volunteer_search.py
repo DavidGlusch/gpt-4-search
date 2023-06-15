@@ -1,7 +1,9 @@
 import csv
+import json
 import os
 import re
 
+import openai
 import pandas as pd
 
 
@@ -69,6 +71,8 @@ def write_organizations_to_csv(filename, organizations):
         "Website",
         "Contact Information",
         "Specialization",
+        "Relevance Score",
+        "In Blacklist",
     ]
 
     with open(filename, "w", newline="", encoding="utf-8") as csvfile:
@@ -129,3 +133,55 @@ def find_duplicates(blacklist_file, data_file, output_file):
     duplicates = data[data['Organization Name'].isin(blacklist['Organization Name'])]  # Знаходження дублікатів організацій
 
     duplicates.to_csv(output_file, index=False, mode='a', header=not os.path.exists(output_file))  # Додавання дублікатів до вихідного файлу
+
+
+def sort_and_filter_organizations(organizations, relevant_rate):
+    sorted_organizations = sorted(organizations, key=lambda x: x["Relevance Score"], reverse=True)
+    filtered_organizations = [org for org in sorted_organizations if org["Relevance Score"] >= relevant_rate]
+    return filtered_organizations
+
+
+def check_relevance(organizations: str, blacklist_path: str) -> str:
+    print("Checking relevance of organizations...")
+    system = f"""
+    You are proffesional system that checks relevance of organizations.\n\n
+    Instructions:\n
+    1. Check if organization in blacklist.\n
+    2. If organization is in blacklist, then it is not relevant and you should find and replace it by relevant organization.\n
+    3. It`s very important to check if organization in blacklist.
+    4. You should find and replace all organizations that are in blacklist by new organizations that you will find.\n
+    BLACKLIST STARTS HERE:\n
+    {get_organization_info(blacklist_path)}
+    BLACKLIST ENDS HERE\n
+    """
+
+    prompt = f"""
+        Given a list of organizations and a blacklist, generate a response that checks whether the organizations entered by
+        the user are not in their blacklist. Additionally, determine the relevance of these organizations in helping with
+        the user's list of items.
+        Lastly, ensure that these organizations are capable of providing assistance to citizens of Ukraine(IT`S IMPORTANT).
+        The evaluation should consider their potential to provide specific items spanning across categories: hygiene, food, cooking appliances, equipment, water purification, specific medications, selected clothing items, and a car.
+
+        List of Organizations: {organizations}
+        Blacklist: {get_organization_name(blacklist_path)}
+        Also add a field(1(in black list) or 0(not it black list)) In Blacklist that indicates if you check this organization in blacklist or not. If 1, find and replace it by relevant organization.
+        
+
+        Please assign a relevance score from 1 to 100 to each organization based on how relevant they are to the user's needs.
+        Do not modify the structure of the organization list in the response save full info and simply add score to each.
+        And simply return the list of organizations with their scores without any words.
+    """
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-16k",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.0,
+        max_tokens=7000,
+    )
+
+    result = response["choices"][0]["message"]["content"].strip(" \n")
+    print(result)
+    return result

@@ -282,7 +282,7 @@ def starter(prompt: str) -> str:
     logging.info(f"user-input: {user_input}")
     try:
         result = run(user_input)
-        show_references()
+        # show_references()
         return result
     except Exception as e:
         print("Error:", e)

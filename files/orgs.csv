@@ -1,4 +1,4 @@
-Organization Name,Website,Contact Information,Specialization
+Organization Name,Website,Contact Information,Specialization,Relevance Score,In Blacklist
 European Civil Protection and Humanitarian Aid Operations,https://ec.europa.eu/echo/,Not provided,Humanitarian assistance and disaster response
 Disasters Emergency Committee (DEC),https://www.dec.org.uk/,Not provided,Emergency relief coordination
 Scottish Catholic International Aid Fund (SCIAF),https://www.sciaf.org.uk/,Not provided,Humanitarian aid and development
@@ -51,3 +51,32 @@ VOICE,https://voiceeu.org/,Not provided,Network of NGOs focused on humanitarian 
 World Evangelical Alliance (WEA),https://worldea.org/,Not provided,Evangelical Christian relief and development
 ReliefWeb,https://reliefweb.int/,Not provided,"Humanitarian news, information, and analysis"
 International Council of Voluntary Agencies (ICVA),https://www.icvanetwork.org/,Not provided,NGO network advocating for effective humanitarian aid
+Love Volunteers,https://www.lovevolunteers.org/,"1 (855) 203-1049, info@lovevolunteers.org",Volunteer Programs in Eastern Europe[1]
+GoEco,https://www.goeco.org/,"1 (646) 240-4545, info@goeco.org",Wildlife Volunteering in Eastern Europe[3]
+Global Volunteers,https://globalvolunteers.org/,"1 (651) 407-6100, email@globalvolunteers.org",Community Development in Eastern Europe[10]
+Projects Abroad,https://www.projects-abroad.org/,"1 (888) 839-3535, info@projects-abroad.org",Volunteer Programs in Eastern European Countries[12]
+AIESEC,https://www.aiesec.org/,"No phone number provided, contact page: https://aiesec.org/contact/",Youth Leadership Programs and Volunteering in Eastern Europe[12]
+Volunteers For Peace,https://vfp.org/,"1 (802) 259-2759, vfp@vfp.org","Community development, peace initiatives, and environmental conservation"
+ELI Abroad,https://www.eliabroad.org/,"1 (303) 321-8278, info@eliabroad.org","Various volunteer opportunities, including education, healthcare, and community development"
+Atlas Corps,https://atlascorps.org/,"1 (202) 391-0525, info@atlascorps.org","Fellowship opportunities for emerging leaders, addressing social issues"
+United Planet,https://www.unitedplanet.org/,"1 (617) 874-8041, quest@unitedplanet.org","Cultural exchange and volunteering programs in various fields, including community development and healthcare"
+Love Volunteers,https://www.lovevolunteers.org/,"1-917-477-7862, help@lovevolunteers.org",Wide range of volunteer programs in Eastern Europe
+Voluntouring,https://www.voluntouring.org/,info@voluntouring.org (no phone number available),Volunteering opportunities and programs in Eastern Europe
+Go Overseas,https://www.gooverseas.com/,support@gooverseas.com (no phone number available),Volunteer Programs in Eastern Europe
+Volunteer Forever,https://www.volunteerforever.com/,support@volunteerforever.com (no phone number available),Volunteer Abroad in Eastern Europe
+Workaway,https://www.workaway.info/,info@workaway.info (no phone number available),Work Exchange and Volunteer programs in Eastern Europe
+Globalteer,https://www.globalteer.org/,"+44 (0)207 193 7815, info@globalteer.org","Community projects, wildlife rescue, and conservation"
+Cross-Cultural Solutions,https://www.crossculturalsolutions.org/,"1 (914) 632-0022, info@crossculturalsolutions.org","Childcare, education, health"
+Habitat for Humanity,https://www.habitat.org/emea,"+421 (0)2 336 690 115, habitatemea@hfheurope.org","Housing, community development"
+Go Overseas,https://www.gooverseas.com/,N/A,"Volunteer programs in Eastern Europe, including live-in English tutoring[0]"
+Volunteer Forever,https://www.volunteerforever.com/,N/A,Volunteer programs in Eastern Europe across various sectors[1]
+CCUSA,https://www.ccusa.com/,"1 (888) 449-3872, info@ccusa.com","Camp Counselors, Russia Program",75,0
+Peace Corps,https://www.peacecorps.gov/,"1 (855) 855-1961, media@peacecorps.gov","Community development, education, health, environment, youth development",80,0
+Volunteer World,https://www.volunteerworld.com/,support@volunteerworld.com,"Environmental conservation, community development, wildlife protection, education",70,0
+VSO (Voluntary Service Overseas),https://www.vsointernational.org/,"44 (0)20 8780 7500, enquiries@vsoint.org","Health, education, and community initiatives",90,0
+GVI (Global Vision International),https://www.gviusa.com/,"1 (888) 653-6028, info@gviworld.com","Environmental conservation, education, and community development",80,0
+Kaya Responsible Travel,https://www.kayaresponsibletravel.com/,"1 (323) 530-9676, info@kayaresponsibletravel.com","Healthcare, community development, education, and conservation",80,0
+International Volunteer HQ (IVHQ),https://www.volunteerhq.org/,"1 (949) 214-1625, info@volunteerhq.org","Education, healthcare, environment, and community support",70,0
+Plan My Gap Year,https://www.planmygapyear.co.uk/,"44 (01793) 680529, info@planmygapyear.co.uk","Childcare, teaching, community development, wildlife conservation",70,0
+United Nations Volunteers,https://www.unv.org/,"+49 (0) 228-815 2000, hq@unv.org",Humanitarian and emergency efforts in Eastern Europe,80,0
+ELI Abroad,https://www.eliabroad.org/,"1 (303) 321-8278, info@eliabroad.org",Various volunteering opportunities,70,0
