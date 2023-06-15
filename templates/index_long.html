@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Organization Generator</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* Додано стилі для екрану загрузки */
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Organization Generator</h1>
+        <form id="org-form" class="mt-4">
+            <div class="form-group">
+                <label for="org-number">Number of Organizations Č </label>
+                <input type="number" class="form-control" id="org-number" placeholder="Enter number of organizations">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="loader" class="hidden">
+            <div class="loader"></div>
+            <p>Loading...</p>
+        </div>
+
+        <table class="table mt-4" id="org-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Organization Name</th>
+                    <th>Website</th>
+                    <th>Contact Information</th>
+                    <th>Specialization</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+<script>
+
+$('#org-form').on('submit', function(e) {
+    e.preventDefault();
+    // Show the loader
+    $('#loader').removeClass('hidden');
+    // Initialize the generated organizations counter
+    var generated_organizations = 0;
+    // Initialize the organization number counter
+    var organization_number = 0;
+    // Set the total number of organizations to generate
+    var total_organizations = $('#org-number').val();
+    // Function to generate organizations
+    var generateOrganizations = function() {
+        $.ajax({
+            type: "POST",
+            url: "/generate",
+            data: {
+                number: Math.min(10, total_organizations - generated_organizations)
+            },
+            success: function(response) {
+                // Update the generated organizations counter
+                generated_organizations += response.length;
+                // Add the generated organizations to the table
+                response.forEach(function(org) {
+                    // Increment the organization number counter
+                    organization_number++;
+                    $('#org-table tbody').append(
+                        '<tr>' +
+                            '<td>' + organization_number + '</td>' + // This is the added counter
+                            '<td>' + org['Organization Name'] + '</td>' +
+                            '<td><a href="' + org['Website'] + '" target="_blank">' + org['Website'] + '</a></td>' +
+                            '<td>' + org['Contact Information'] + '</td>' +
+                            '<td>' + org['Specialization'] + '</td>' +
+                        '</tr>'
+                    );
+                });
+                // Save the table data in local storage
+                var tableData = $('#org-table tbody').html();
+                localStorage.setItem('orgData', JSON.stringify(tableData));
+                // Generate more organizations if necessary
+                if (generated_organizations < total_organizations) {
+                    generateOrganizations();
+                } else {
+                    // Hide the loader
+                    $('#loader').addClass('hidden');
+                }
+            }
+        });
+    };
+    // Start generating organizations
+    generateOrganizations();
+});
+</script>
+</html>

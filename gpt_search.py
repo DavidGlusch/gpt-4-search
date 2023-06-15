@@ -23,6 +23,8 @@ import ssl
 # import readline
 from typing import Optional, Callable
 
+from numpy import ndarray
+
 
 def count_tokens(text: str) -> int:
     encoding = tiktoken.encoding_for_model("gpt-4")
@@ -48,7 +50,7 @@ def request(url: str) -> list[str]:
     return docs
 
 
-def vector_similarity(x: list[float], y: list[float]) -> float:
+def vector_similarity(x: list[float], y: list[float]) -> ndarray:
     return np.dot(np.array(x), np.array(y))
 
 
@@ -90,7 +92,7 @@ def search(queries: str) -> str:
         results = GoogleSearchAPIWrapper().results(query, 5)
         for result in results:
             i = len(links)
-            summary += f'[{i}] {result["title"]}\n{result.get("snippet", "")}\n'
+            summary += f'[{i}] {result.get("title")}\n{result.get("snippet", "")}\n'
             links.append({"link": result["link"], "query": query})
     logging.info(links)
     return summary
@@ -189,7 +191,7 @@ def instruction_prompt(query: str, tools: list[dict], context: Optional[str] = N
     for tool in tools:
         prompt += f'- {tool["name"]}{tool["args"]} {tool["description"]}\n'
 
-    prompt += "In each response, you must start with a function call like `SEARCH(\"something\")` or `PYTHON(\"\"\"1+1\"\"\")`. Don't explain why you use a tool. If you cannot figure out the answer, you say ’I don’t know’. When you are generating answers according to the search result, link your answers to the snippet id like `[1]`, and use the same language as the questioner\n"
+    prompt += "Your response will be processed by a machine, not human, so strictly in each response, you must start with a function call like `SEARCH([\"something\"])` or `PYTHON(\"\"\"1+1\"\"\")`. Don't explain why you use a tool. If you cannot figure out the answer, you say ’I don’t know’. When you are generating answers according to the search result, link your answers to the snippet id like `[1]`, and use the same language as the questioner\n"
 
     if context:
         prompt += "Context from the previous assistant:\n```\n"
@@ -280,9 +282,6 @@ def starter(prompt: str) -> str:
 
     user_input = prompt
     logging.info(f"user-input: {user_input}")
-    try:
-        result = run(user_input)
-        show_references()
-        return result
-    except Exception as e:
-        print("Error:", e)
+    result = run(user_input)
+    # show_references() (most likely Error: list index out of range)
+    return result
