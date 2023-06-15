@@ -48,6 +48,8 @@
                     <th>Website</th>
                     <th>Contact Information</th>
                     <th>Specialization</th>
+                    <th>Relevance Score</th>
+                    <th>In Blacklist</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,6 +87,8 @@ $(document).ready(function() {
                             '<td><a href="' + org['Website'] + '" target="_blank">' + org['Website'] + '</a></td>' +
                             '<td>' + org['Contact Information'] + '</td>' +
                             '<td>' + org['Specialization'] + '</td>' +
+                            '<td>' + org['Relevance Score'] + '</td>' +
+                            '<td>' + org['In Blacklist'] + '</td>' +
                         '</tr>'
                     );
                 });

@@ -4,7 +4,7 @@ from gpt_volunteer_search import (
     parse_organization_data,
     write_organizations_to_csv,
     append_csv,
-    get_organization_name, find_duplicates,
+    get_organization_name, find_duplicates, check_relevance, sort_and_filter_organizations,
 )
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -39,11 +39,13 @@ def main(organizations_to_generate):
         Please only include organizations that actually exist and provide real,
         working website links (base URLs, not specific pages).
     """
-    result = starter(PROMPT)
+    data = starter(PROMPT)
     print("-" * 40)
     print(PROMPT)
     print("-" * 40)
-    organizations = parse_organization_data(result)
+    organizations = parse_organization_data(data)
+    organizations = check_relevance(organizations, USED_ORGANIZATIONS_PATH)
+    organizations = sort_and_filter_organizations(eval(organizations), 70)
     write_organizations_to_csv("organizations.csv", organizations)
     find_duplicates(USED_ORGANIZATIONS_PATH, "organizations.csv", "duplicates.csv")
     append_csv("organizations.csv", USED_ORGANIZATIONS_PATH)
