@@ -5,8 +5,8 @@
     <title>Organization Generator</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <style>
-        /* Додано стилі для екрану загрузки */
         .loader {
             border: 16px solid #f3f3f3;
             border-top: 16px solid #3498db;
@@ -33,8 +33,16 @@
         <h1 class="mt-5">Organization Generator</h1>
         <form id="org-form" class="mt-4">
             <div class="form-group">
-                <label for="org-number">Number of Organizations Č </label>
+                <label for="org-number">Number of Organizations</label>
                 <input type="number" class="form-control" id="org-number" placeholder="Enter number of organizations">
+            </div>
+            <div class="form-group">
+                <label for="description-switch">Enable custom prompt</label>
+                <input type="checkbox" id="description-switch" checked data-toggle="toggle">
+            </div>
+            <div class="form-group">
+                <label for="customPrompt">Custom prompt</label>
+                <textarea class="form-control" id="customPrompt" rows="3">Your goal is to generate a well-structured list of volunteering organizations that can provide humanitarian aid have not been contacted yet and are suitable for Eastern Europe.</textarea>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
@@ -63,32 +71,27 @@
 
 $('#org-form').on('submit', function(e) {
     e.preventDefault();
-    // Show the loader
     $('#loader').removeClass('hidden');
-    // Initialize the generated organizations counter
     var generated_organizations = 0;
-    // Initialize the organization number counter
     var organization_number = 0;
-    // Set the total number of organizations to generate
     var total_organizations = $('#org-number').val();
-    // Function to generate organizations
+    var description = $('#description-switch').prop('checked') ? $('#customPrompt').val() : undefined;
     var generateOrganizations = function() {
+        var data = { number: Math.min(10, total_organizations - generated_organizations) };
+        if(description !== undefined) {
+            data.description = description;
+        }
         $.ajax({
             type: "POST",
             url: "/generate",
-            data: {
-                number: Math.min(10, total_organizations - generated_organizations)
-            },
+            data: data,
             success: function(response) {
-                // Update the generated organizations counter
                 generated_organizations += response.length;
-                // Add the generated organizations to the table
                 response.forEach(function(org) {
-                    // Increment the organization number counter
                     organization_number++;
                     $('#org-table tbody').append(
                         '<tr>' +
-                            '<td>' + organization_number + '</td>' + // This is the added counter
+                            '<td>' + organization_number + '</td>' +
                             '<td>' + org['Organization Name'] + '</td>' +
                             '<td><a href="' + org['Website'] + '" target="_blank">' + org['Website'] + '</a></td>' +
                             '<td>' + org['Contact Information'] + '</td>' +
@@ -96,21 +99,38 @@ $('#org-form').on('submit', function(e) {
                         '</tr>'
                     );
                 });
-                // Save the table data in local storage
                 var tableData = $('#org-table tbody').html();
                 localStorage.setItem('orgData', JSON.stringify(tableData));
-                // Generate more organizations if necessary
                 if (generated_organizations < total_organizations) {
                     generateOrganizations();
                 } else {
-                    // Hide the loader
                     $('#loader').addClass('hidden');
                 }
             }
         });
     };
-    // Start generating organizations
     generateOrganizations();
+});
+
+
+$('#description-submit').on('click', function(e) {
+
+    $.ajax({
+        type: "POST",
+        url: "/description",
+        data: { description: description },
+        success: function(response) {
+            console.log("The server responded with: " + response);
+        }
+    });
+});
+
+$('#description-switch').change(function() {
+    if(this.checked) {
+        $('#customPrompt').prop('disabled', false);
+    } else {
+        $('#customPrompt').prop('disabled', true);
+    }
 });
 </script>
 </html>

@@ -13,7 +13,9 @@ USED_ORGANIZATIONS_PATH = os.getenv("USED_ORGANIZATIONS_PATH")
 NECESSARY_EQUIP = os.getenv("NECESSARY_EQUIP")
 
 
-def main(organizations_to_generate):
+def main(organizations_to_generate, user_prompt="""Your goal is to generate a well-structured list of 
+        volunteering organizations that can provide humanitarian aid have not been contacted yet
+        and are suitable for Eastern Europe."""):
     PROMPT = f"""
         Your response is processed by a machine, not human,
         so your response should strictly be in the next format:
@@ -28,14 +30,13 @@ def main(organizations_to_generate):
     <--------- DO NOT INCLUDE THESE ORGANIZATIONS
     
         Your response should not contain duplicates.
-        Your goal is to generate a well-structured list of 
-        volunteering organizations that can provide humanitarian aid have not been contacted yet
-        and are suitable for Eastern Europe. Your response should 
-        include at least {organizations_to_generate} organizations
+        {user_prompt}
+        Your response should include at least {organizations_to_generate} organizations
         and should strictly adhere to the specified format. 
         Please only include organizations that actually exist and provide real,
         working website links (base URLs, not specific pages).
     """
+
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(timestamp)
     result = starter(PROMPT)
