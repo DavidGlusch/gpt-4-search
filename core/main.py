@@ -1,22 +1,25 @@
 import datetime
 import os
-from gpt_search import starter
-from gpt_volunteer_search import (
+from core.gpt_search import starter
+from core.utils import (
     parse_organization_data,
     write_organizations_to_csv,
     append_csv,
     get_organization_name, find_duplicates,
 )
-
+TEMP_ORGANIZATION = os.getenv("TEMP_ORGANIZATIONS")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 USED_ORGANIZATIONS_PATH = os.getenv("USED_ORGANIZATIONS_PATH")
 NECESSARY_EQUIP = os.getenv("NECESSARY_EQUIP")
+DUPLICATES = os.getenv("DUPLICATES")
 
 
-def main(organizations_to_generate, user_prompt="""Your goal is to generate a well-structured list of 
-        volunteering organizations that can provide humanitarian aid have not been contacted yet
-        and are suitable for Eastern Europe."""):
-    PROMPT = f"""
+def main(number_of_organizations: int, user_prompt: str = None) -> list:
+    if not user_prompt:
+        user_prompt = """Your goal is to generate a well-structured list of 
+            volunteering organizations that can provide humanitarian aid have not been contacted yet
+            and are suitable for Eastern Europe."""
+    prompt = f"""
         Your response is processed by a machine, not human,
         so your response should strictly be in the next format:
 
@@ -31,7 +34,7 @@ def main(organizations_to_generate, user_prompt="""Your goal is to generate a we
     
         Your response should not contain duplicates.
         {user_prompt}
-        Your response should include at least {organizations_to_generate} organizations
+        Your response should include at least {number_of_organizations} organizations
         and should strictly adhere to the specified format. 
         Please only include organizations that actually exist and provide real,
         working website links (base URLs, not specific pages).
@@ -39,13 +42,13 @@ def main(organizations_to_generate, user_prompt="""Your goal is to generate a we
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(timestamp)
-    result = starter(PROMPT)
+    result = starter(prompt)
     # print("-" * 40)
     # print(PROMPT)
     # print("-" * 40)
     organizations = parse_organization_data(result)
-    write_organizations_to_csv("organizations.csv", organizations)
-    find_duplicates(USED_ORGANIZATIONS_PATH, "organizations.csv", "duplicates.csv")
-    append_csv("organizations.csv", USED_ORGANIZATIONS_PATH)
+    write_organizations_to_csv(TEMP_ORGANIZATION, organizations)
+    find_duplicates(USED_ORGANIZATIONS_PATH, TEMP_ORGANIZATION, DUPLICATES)
+    append_csv(TEMP_ORGANIZATION, USED_ORGANIZATIONS_PATH)
 
     return organizations

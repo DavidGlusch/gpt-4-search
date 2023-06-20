@@ -5,14 +5,14 @@ import re
 import pandas as pd
 
 
-def get_organization_info(path_to_used_organizations) -> str:
+def get_organization_info(path_to_used_organizations: str) -> str:
     with open(path_to_used_organizations, "r") as f:
         orgs = f.readlines()
     orgs = [org.strip() for org in orgs]
     return "\n".join(orgs)
 
 
-def parse_organization_data(data_string):
+def parse_organization_data(data_string: str) -> list:
     organizations = []
 
     # Split the text into blocks separated by the word 'Organization Name:'
@@ -63,7 +63,7 @@ def parse_organization_data(data_string):
 #     return organizations
 
 
-def write_organizations_to_csv(filename, organizations):
+def write_organizations_to_csv(filename: str, organizations: list) -> None:
     fieldnames = [
         "Organization Name",
         "Website",
@@ -77,7 +77,7 @@ def write_organizations_to_csv(filename, organizations):
         writer.writerows(organizations)
 
 
-def extract_fields_from_csv(csv_filename):
+def extract_fields_from_csv(csv_filename: str) -> list:
     fields = []
     with open(csv_filename, "r") as csvfile:
         reader = csv.DictReader(csvfile)
@@ -92,7 +92,7 @@ def extract_fields_from_csv(csv_filename):
     return fields
 
 
-def write_fields_to_file(filename, fields):
+def write_fields_to_file(filename: str, fields: list) -> None:
     with open(filename, "a") as f:
         for field in fields:
             f.write("Organization Name: {}\n".format(field["Organization Name"]))
@@ -102,7 +102,7 @@ def write_fields_to_file(filename, fields):
             f.write("\n")
 
 
-def append_csv(input_file, output_file):
+def append_csv(input_file: str, output_file: str) -> None:
     with open(input_file, 'r') as file_in, open(output_file, 'a', newline='') as file_out:
         reader = csv.reader(file_in)
         writer = csv.writer(file_out)
@@ -110,7 +110,7 @@ def append_csv(input_file, output_file):
         writer.writerows(reader)
 
 
-def get_organization_name(orgs_file):
+def get_organization_name(orgs_file: str) -> str:
     organization_name = []
 
     with open(orgs_file, 'r', newline='') as csvfile:
@@ -122,10 +122,12 @@ def get_organization_name(orgs_file):
     return " \n".join(organization_name)
 
 
-def find_duplicates(blacklist_file, data_file, output_file):
+def find_duplicates(blacklist_file: str, data_file: str, output_file: str) -> None:
     blacklist = pd.read_csv(blacklist_file)  # Завантаження блеклісту
     data = pd.read_csv(data_file)  # Завантаження нових даних
 
-    duplicates = data[data['Organization Name'].isin(blacklist['Organization Name'])]  # Знаходження дублікатів організацій
+    duplicates = data[
+        data['Organization Name'].isin(blacklist['Organization Name'])]  # Знаходження дублікатів організацій
 
-    duplicates.to_csv(output_file, index=False, mode='a', header=not os.path.exists(output_file))  # Додавання дублікатів до вихідного файлу
+    duplicates.to_csv(output_file, index=False, mode='a',
+                      header=not os.path.exists(output_file))  # Додавання дублікатів до вихідного файлу
