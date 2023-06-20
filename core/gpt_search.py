@@ -18,7 +18,7 @@ import tiktoken
 import json
 import requests
 import re
-import logging
+# import #logging
 import ssl
 # import readline
 from typing import Optional, Callable
@@ -94,7 +94,7 @@ def search(queries: str) -> str:
             i = len(links)
             summary += f'[{i}] {result.get("title")}\n{result.get("snippet", "")}\n'
             links.append({"link": result["link"], "query": query})
-    logging.info(links)
+    ##logging.info(links)
     return summary
 
 
@@ -108,7 +108,7 @@ def summarize(snippet_ids: str) -> str:
             summary += '\n'.join(top_k)
             summary += '\n'
         except Exception as e:
-            logging.error(e)
+            # logging.error(e)
             continue
     return summary
 
@@ -122,7 +122,7 @@ def python(code: str) -> str:
             tmp.flush()
             return run_with_timeout(['python', tmp.name], timeout_sec=5)
     except Exception as e:
-        logging.error(e)
+        # logging.error(e)
         print(e)
         return str(e) + "\ntry again and optimize the code"
 
@@ -165,19 +165,19 @@ def messages_tokens() -> int:
 
 
 def call_llm(streaming: bool = False) -> str:
-    if streaming:
-        chat = ChatOpenAI(model_name="gpt-4", streaming=True, callback_manager=CallbackManager(
-            [StreamingStdOutCallbackHandler()]), verbose=True, temperature=0)
-    else:
-        chat = ChatOpenAI(model_name="gpt-4", verbose=True, temperature=0)
-    logging.info(f"gpt-context: {messages}")
+    # if streaming:
+    #     chat = ChatOpenAI(model_name="gpt-4", streaming=True, callback_manager=CallbackManager(
+    #         [StreamingStdOutCallbackHandler()]), verbose=True, temperature=0)
+    # else:
+    chat = ChatOpenAI(model_name="gpt-4", verbose=True, temperature=0, request_timeout=200)
+    # logging.info(f"gpt-context: {messages}")
     resp = chat.generate([(map(lambda msg: msg[1], messages))]).generations[0][0].text
-    logging.info(f"gpt-response: {resp}")
+    # logging.info(f"gpt-response: {resp}")
     prompt_tokens = messages_tokens()
     complete_tokens = count_tokens(resp)
     total_cost = (0.03 * prompt_tokens + 0.06 * complete_tokens) / 1000
-    logging.info(
-        f"cost: ${total_cost}, prompt_tokens: {prompt_tokens}, complete_tokens: {complete_tokens}")
+    # logging.info(
+    # f"cost: ${total_cost}, prompt_tokens: {prompt_tokens}, complete_tokens: {complete_tokens}")
     print('')
     return resp
 
@@ -223,13 +223,13 @@ def add_reference(answer: str):
             references.append(int(id))
 
 
-def show_references():
-    global references
-    output = ""
-    for id in references:
-        output += f"[{id}]: {links[id]['link']}\n"
-    print(output)
-    references = []
+# def show_references():
+#     global references
+#     output = ""
+#     for id in references:
+#         output += f"[{id}]: {links[id]['link']}\n"
+#     print(output)
+#     references = []
 
 
 def run(query: str) -> str:
@@ -241,7 +241,7 @@ def run(query: str) -> str:
             add_message(HumanMessage(content=f"Q:{query}"))
         else:
             context = summarize_messages()
-            logging.info(f"summarization: {context}")
+            # logging.info(f"summarization: {context}")
             clear_messages()
             add_message(HumanMessage(
                 content=instruction_prompt(query, tools, context)))
@@ -259,29 +259,29 @@ def run(query: str) -> str:
                 if tool["name"] == func_name:
                     result = tool["run"](func_args)
                     result = f"```result\n{result}\n```"
-                    logging.info(f"tool-result: {result}".encode("UTF-8"))
+                    # logging.info(f"tool-result: {result}".encode("UTF-8"))
                     add_message(AIMessage(content=result), is_tool_result=True)
                     break
             else:
-                logging.info("no function call, so it is the answer")
+                # logging.info("no function call, so it is the answer")
                 return resp
         else:
-            logging.info("no function call, so it is the answer")
+            # logging.info("no function call, so it is the answer")
             return resp
 
 
 def starter(prompt: str) -> str:
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s:%(message)s',
-        handlers=[
-            logging.FileHandler("gpt-search.log"),
-            # logging.StreamHandler()
-        ]
-    )
+    # logging.basicConfig(
+    # level=#logging.INFO,
+    # format='%(asctime)s %(levelname)s:%(message)s',
+    # handlers=[
+    # logging.FileHandler("gpt-search.#log"),
+    # #logging.StreamHandler()
+    # ]
+    # )
 
     user_input = prompt
-    logging.info(f"user-input: {user_input}")
+    # logging.info(f"user-input: {user_input}")
     result = run(user_input)
     # show_references() (most likely Error: list index out of range)
     return result

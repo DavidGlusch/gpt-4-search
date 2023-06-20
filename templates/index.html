@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <title>Organization Generator</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <style>
-        /* Додано стилі для екрану загрузки */
         .loader {
             border: 16px solid #f3f3f3;
             border-top: 16px solid #3498db;
@@ -28,6 +30,7 @@
     </style>
 </head>
 <body>
+    <button id="export" class="btn btn-secondary mt-2">Export to CSV</button>
     <div class="container">
         <h1 class="mt-5">Organization Generator</h1>
         <form id="org-form" class="mt-4">
@@ -35,15 +38,25 @@
                 <label for="org-number">Number of Organizations</label>
                 <input type="number" class="form-control" id="org-number" placeholder="Enter number of organizations">
             </div>
+            <div class="form-group">
+                <label for="prompt-switch">Enable custom prompt</label>
+                <input type="checkbox" id="prompt-switch" checked data-toggle="toggle">
+            </div>
+            <div class="form-group">
+                <label for="customPrompt">Custom prompt</label>
+                <textarea class="form-control" id="customPrompt" rows="3">Your goal is to generate a well-structured list of volunteering organizations that can provide humanitarian aid have not been contacted yet and are suitable for Eastern Europe.</textarea>
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         <div id="loader" class="hidden">
             <div class="loader"></div>
             <p>Loading...</p>
         </div>
+
         <table class="table mt-4" id="org-table">
             <thead>
                 <tr>
+                    <th>№</th>
                     <th>Organization Name</th>
                     <th>Website</th>
                     <th>Contact Information</th>
@@ -55,46 +68,17 @@
         </table>
     </div>
 </body>
-<script src="static/script.js"></script>
+
+<script src="../static/scripts/generateOrganizations.js"></script>
+<script src="../static/scripts/submitPrompt.js"></script>
+<script src="../static/scripts/togglePrompt.js"></script>
+<script src="../static/scripts/exportToCsv.js"></script>
 <script>
-$(document).ready(function() {
-    // Відновлення даних з локального сховища при завантаженні сторінки
-    var storedData = JSON.parse(localStorage.getItem('orgData'));
-    if (storedData) {
-        $('#org-table tbody').html(storedData);
-    }
-
-    $('#org-form').on('submit', function(e) {
-        e.preventDefault();
-        // Показати екран загрузки перед виконанням запиту
-        $('#loader').removeClass('hidden');
-        $.ajax({
-            type: "POST",
-            url: "/generate",
-            data: {
-                number: $('#org-number').val()
-            },
-            success: function(response) {
-                // Приховати екран загрузки після отримання відповіді
-                $('#loader').addClass('hidden');
-                $('#org-table tbody').empty();
-                response.forEach(function(org) {
-                    $('#org-table tbody').append(
-                        '<tr>' +
-                            '<td>' + org['Organization Name'] + '</td>' +
-                            '<td><a href="' + org['Website'] + '" target="_blank">' + org['Website'] + '</a></td>' +
-                            '<td>' + org['Contact Information'] + '</td>' +
-                            '<td>' + org['Specialization'] + '</td>' +
-                        '</tr>'
-                    );
-                });
-
-                // Збереження даних у локальне сховище
-                var tableData = $('#org-table tbody').html();
-                localStorage.setItem('orgData', JSON.stringify(tableData));
-            }
-        });
+    $(document).ready(function() {
+        generateOrganizations($);
+        submitPrompt($);
+        togglePrompt($);
+        exportToCsv($, Papa);
     });
-});
 </script>
 </html>

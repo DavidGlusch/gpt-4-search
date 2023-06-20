@@ -1,35 +1,27 @@
 from flask import Flask, render_template, request, jsonify, session
-
-
-from main import main
+from core.main import main
 
 app = Flask(__name__)
 app.secret_key = "9801741-984ysdfsdfsdf"
 
 
-def generate_data(count, description=None):
-    if description:
-        return main(count, description)
-    return main(count)
-
-
 @app.route("/")
 def home():
-    return render_template("index_long.html")
+    return render_template("index.html")
 
 
 @app.route("/generate", methods=["POST"])
 def generate_organizations():
-    number = request.form.get("number")
-    description = request.form.get("description")
-    print(number, description)
+    number_of_organizations = int(request.form.get("number_of_organizations"))
+    user_prompt = request.form.get("prompt")
+    print(number_of_organizations, f"User`s prompt: {user_prompt}")
 
-    session['total_organizations'] = int(number)
+    session['total_organizations'] = number_of_organizations
     session['generated_organizations'] = 0
-    data = generate_data(int(number), description)
+    data = main(number_of_organizations, user_prompt)
     session['generated_organizations'] += len(data)
     return jsonify(data)
 
 
 if __name__ == '__main__':
-    Flask.run(app)
+    app.run()
